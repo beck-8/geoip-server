@@ -12,19 +12,17 @@
 - **pprof 性能分析**：支持通过环境变量启用 pprof 性能分析端点。
 - **RequestID**：为每个请求生成唯一的 RequestID，便于追踪和调试。
 
----
 
 ## 📦 编译
 
 本服务依赖 Go 1.20+
 
 ```bash
-git clone https://github.com/your/repo.git
+git clone https://github.com/beck-8/geoip-server.git
 cd geoip-server
 go build -o geoip-server main.go
 ```
 
----
 
 ## 🛠️ 参数说明
 
@@ -39,7 +37,6 @@ go build -o geoip-server main.go
 | `-logbackups`    | int      | `5`                         | 最大保留备份日志数量        |
 | `-logage`        | int      | `14`                        | 日志最大保留天数            |
 
----
 
 ## 🚀 启动方式
 
@@ -52,7 +49,6 @@ go build -o geoip-server main.go
   -log geo.log
 ```
 
----
 
 ## 🔍 请求示例
 
@@ -86,7 +82,6 @@ GET /api/ipinfo
 }
 ```
 
----
 
 ## 🧪 环境变量
 
@@ -94,7 +89,6 @@ GET /api/ipinfo
 |------------------|---------------------------------------------|
 | `MAXMIND_PPROF`  | 非空时开启 PProf 性能分析，监听端口 :62000 |
 
----
 
 ## 📓 日志说明
 
@@ -108,14 +102,12 @@ GET /api/ipinfo
 [2025-07-20T23:22:12+08:00] 127.0.0.1 - [bb415f25-cd3b-450d-ab6b-86f153857538] "GET /api/ipinfo?ip=8.8.8.8 HTTP/1.1" 200 0 "127.0.0.1:8399" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36" "" "" "127.0.0.1:10163"
 ```
 
----
 
 ## 📥 数据库获取
 
    - 访问 [MaxMind 官网](https://www.maxmind.com/)，注册并下载 `GeoLite2-Country.mmdb` 和 `GeoLite2-ASN.mmdb` 文件。
    - 或从别的地方[找](https://github.com/P3TERX/GeoLite.mmdb)
    - 将这两个文件放置在项目根目录或指定路径。
----
 
 ## 🧩 性能分析（可选）
 
@@ -132,7 +124,6 @@ export MAXMIND_PPROF=1
 http://localhost:62000/debug/pprof/
 ```
 
----
 
 ## 📄 License
 

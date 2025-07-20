@@ -21,10 +21,12 @@ import (
 )
 
 var (
-	countryDB *geoip2.Reader
-	asnDB     *geoip2.Reader
-	geoCache  *lru.Cache
-	asnCache  *lru.Cache
+	Version       = "dev"
+	CurrentCommit = "unknown"
+	countryDB     *geoip2.Reader
+	asnDB         *geoip2.Reader
+	geoCache      *lru.Cache
+	asnCache      *lru.Cache
 )
 
 type GeoResponse struct {
@@ -157,7 +159,13 @@ func main() {
 	logSize := flag.Int("logsize", 10, "Max size (MB) per log file")
 	logBackups := flag.Int("logbackups", 5, "Number of backup logs to retain")
 	logAge := flag.Int("logage", 14, "Max age (days) to retain logs")
+	showVersion := flag.Bool("v", false, "Show version")
 	flag.Parse()
+
+	if *showVersion {
+		fmt.Printf("Version: %s\nCommit: %s\n", Version, CurrentCommit)
+		return
+	}
 
 	multiWriter := io.MultiWriter(os.Stdout, &lumberjack.Logger{
 		Filename:   *logPath,
