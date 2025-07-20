@@ -35,5 +35,6 @@ go.work.sum
 *.log.gz
 
 maxmind-server*
+geoip-server*
 
 *.mmdb
