@@ -26,21 +26,21 @@ var (
 	countryDB     *geoip2.Reader
 	asnDB         *geoip2.Reader
 	geoCache      *lru.Cache
-	asnCache      *lru.Cache
 )
 
 type GeoResponse struct {
-	IP                    string `json:"ip"`
-	ContinentCode         string `json:"continent_code"`
-	Country               string `json:"country"`
-	CountryZH             string `json:"country_zh"`
-	CountryCode           string `json:"country_code"`
-	RegisteredCountryCode string `json:"registered_country_code"`
-	ASN                   uint   `json:"asn"`
-	Organization          string `json:"organization"`
-	ASNIPv4Num            uint   `json:"asn_ipv4_num"`
-	Timestamp             int64  `json:"timestamp"`
-	RequestID             string `json:"request_id"`
+	IP                    string `json:"ip,omitempty"`
+	ContinentCode         string `json:"continent_code,omitempty"`
+	Country               string `json:"country,omitempty"`
+	CountryZH             string `json:"country_zh,omitempty"`
+	CountryCode           string `json:"country_code,omitempty"`
+	Colo                  string `json:"colo,omitempty"`
+	RegisteredCountryCode string `json:"registered_country_code,omitempty"`
+	ASN                   uint   `json:"asn,omitempty"`
+	Organization          string `json:"organization,omitempty"`
+	ASNIPv4Num            uint   `json:"asn_ipv4_num,omitempty"`
+	Timestamp             int64  `json:"timestamp,omitempty"`
+	RequestID             string `json:"request_id,omitempty"`
 }
 
 func getRealIP(c *gin.Context) string {
@@ -121,7 +121,10 @@ func geoHandler(c *gin.Context) {
 	if asnRecord != nil {
 		res.ASN = asnRecord.AutonomousSystemNumber
 		res.Organization = asnRecord.AutonomousSystemOrganization
-		res.ASNIPv4Num = asnRecord.AutonomousSystemNumber
+		// res.ASNIPv4Num = asnRecord.AutonomousSystemNumber
+	}
+	if colo := strings.TrimSpace(c.GetHeader("Cf-Ray")); colo != "" {
+		res.Colo = strings.Split(colo, "-")[1]
 	}
 
 	c.JSON(http.StatusOK, res)

@@ -1,0 +1,15 @@
+#/etc/systemd/system/geoip-server.service
+[Unit]
+Description = geoip-server
+After = network.target syslog.target
+Wants = network.target
+
+[Service]
+Type = simple
+StandardOutput=null
+WorkingDirectory=/opt/geoip-server/
+ExecStart = /opt/geoip-server/geoip-server -port :8399 -asn-mmdb GeoLite2-ASN.mmdb -country-mmdb GeoLite2-Country.mmdb -log /var/log/geoip-server.log
+Restart=always
+
+[Install]
+WantedBy = multi-user.target
