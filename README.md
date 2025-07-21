@@ -23,6 +23,10 @@ cd geoip-server
 go build -o geoip-server main.go
 ```
 
+**X86_64一键安装**
+```bash
+curl -sSL https://raw.githubusercontent.com/beck-8/geoip-server/refs/heads/main/install.sh | bash
+```
 
 ## 🛠️ 参数说明
 
