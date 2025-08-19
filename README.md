@@ -53,6 +53,24 @@ curl -sSL https://raw.githubusercontent.com/beck-8/geoip-server/refs/heads/main/
   -log geo.log
 ```
 
+🐳 Docker-Compose
+> 自己下载好mmdb数据库
+```yaml
+version: "3"
+services:
+  subs-check:
+    image: ghcr.io/beck-8/geoip-server:latest
+    container_name: geoip-server
+    volumes:
+      - ./GeoLite2-City.mmdb:/app/GeoLite2-City.mmdb
+      - ./GeoLite2-ASN.mmdb:/app/GeoLite2-ASN.mmdb
+    ports:
+      - "8399:8399"
+    environment:
+      - TZ=Asia/Shanghai
+    restart: always
+    network_mode: bridge
+```
 
 ## 🔍 请求示例
 
