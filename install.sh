@@ -31,15 +31,15 @@ echo "下载 URL: ${GEOIP_SERVER_URL}"
 # Fetch the latest GeoLite2 database URLs from GitHub API
 echo "正在获取最新的 GeoLite2 数据库 release 版本..."
 MMDB_RELEASE_INFO=$(curl -s https://api.github.com/repos/P3TERX/GeoLite.mmdb/releases/latest)
-COUNTRY_MMDB_URL=$(echo "$MMDB_RELEASE_INFO" | jq -r '.assets[] | select(.name == "GeoLite2-Country.mmdb") | .browser_download_url')
+CITY_MMDB_URL=$(echo "$MMDB_RELEASE_INFO" | jq -r '.assets[] | select(.name == "GeoLite2-City.mmdb") | .browser_download_url')
 ASN_MMDB_URL=$(echo "$MMDB_RELEASE_INFO" | jq -r '.assets[] | select(.name == "GeoLite2-ASN.mmdb") | .browser_download_url')
 
-if [ -z "$COUNTRY_MMDB_URL" ] || [ -z "$ASN_MMDB_URL" ]; then
+if [ -z "$CITY_MMDB_URL" ] || [ -z "$ASN_MMDB_URL" ]; then
     echo "无法获取最新的 GeoLite2 数据库链接，请检查网络连接或 GitHub API 限制。"
     exit 1
 fi
 
-echo "GeoLite2-Country.mmdb 下载 URL: ${COUNTRY_MMDB_URL}"
+echo "GeoLite2-City.mmdb 下载 URL: ${CITY_MMDB_URL}"
 echo "GeoLite2-ASN.mmdb 下载 URL: ${ASN_MMDB_URL}"
 
 # Check if running as root
@@ -59,8 +59,8 @@ tar -xzf geoip-server.tar.gz -C "${INSTALL_DIR}"
 rm geoip-server.tar.gz
 
 # Download GeoLite2 databases
-echo "正在下载 GeoLite2-Country.mmdb..."
-wget -O "${INSTALL_DIR}/GeoLite2-Country.mmdb" "${COUNTRY_MMDB_URL}"
+echo "正在下载 GeoLite2-City.mmdb..."
+wget -O "${INSTALL_DIR}/GeoLite2-City.mmdb" "${CITY_MMDB_URL}"
 echo "正在下载 GeoLite2-ASN.mmdb..."
 wget -O "${INSTALL_DIR}/GeoLite2-ASN.mmdb" "${ASN_MMDB_URL}"
 
@@ -84,7 +84,7 @@ Wants=network.target
 Type=simple
 StandardOutput=null
 WorkingDirectory=${INSTALL_DIR}
-ExecStart=${INSTALL_DIR}/geoip-server -port :8399 -asn-mmdb GeoLite2-ASN.mmdb -country-mmdb GeoLite2-Country.mmdb -log ${LOG_FILE}
+ExecStart=${INSTALL_DIR}/geoip-server -port :8399 -asn-mmdb GeoLite2-ASN.mmdb -city-mmdb GeoLite2-City.mmdb -log ${LOG_FILE}
 Restart=always
 
 [Install]

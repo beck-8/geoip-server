@@ -34,6 +34,8 @@ type GeoResponse struct {
 	Country               string `json:"country,omitempty"`
 	CountryZH             string `json:"country_zh,omitempty"`
 	CountryCode           string `json:"country_code,omitempty"`
+	City                  string `json:"city,omitempty"`
+	CityZH                string `json:"city_zh,omitempty"`
 	Colo                  string `json:"colo,omitempty"`
 	RegisteredCountryCode string `json:"registered_country_code,omitempty"`
 	ASN                   uint   `json:"asn,omitempty"`
@@ -59,29 +61,29 @@ func getRealIP(c *gin.Context) string {
 }
 
 type geoCacheEntry struct {
-	country *geoip2.Country
+	country *geoip2.City
 	asn     *geoip2.ASN
 }
 
-func queryGeo(ip netip.Addr) (*geoip2.Country, *geoip2.ASN, error) {
+func queryGeo(ip netip.Addr) (*geoip2.City, *geoip2.ASN, error) {
 	if v, ok := geoCache.Get(ip.String()); ok {
 		entry := v.(*geoCacheEntry)
 		return entry.country, entry.asn, nil
 	}
 
-	countryRecord, err := countryDB.Country(ip)
+	cityRecord, err := countryDB.City(ip)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	asnRecord, err := asnDB.ASN(ip)
 	if err != nil {
-		return countryRecord, nil, err
+		return cityRecord, nil, err
 	}
 
-	geoCache.Add(ip.String(), &geoCacheEntry{country: countryRecord, asn: asnRecord})
+	geoCache.Add(ip.String(), &geoCacheEntry{country: cityRecord, asn: asnRecord})
 
-	return countryRecord, asnRecord, nil
+	return cityRecord, asnRecord, nil
 }
 
 func geoHandler(c *gin.Context) {
@@ -113,6 +115,8 @@ func geoHandler(c *gin.Context) {
 		Country:               cityRecord.Country.Names.English,
 		CountryZH:             cityRecord.Country.Names.SimplifiedChinese,
 		CountryCode:           cityRecord.Country.ISOCode,
+		City:                  cityRecord.City.Names.English,
+		CityZH:                cityRecord.City.Names.SimplifiedChinese,
 		RegisteredCountryCode: cityRecord.RegisteredCountry.ISOCode,
 		Timestamp:             time.Now().UnixMilli(),
 		RequestID:             requestID.(string),
@@ -154,7 +158,7 @@ func init() {
 }
 
 func main() {
-	cityMMDBPath := flag.String("country-mmdb", "GeoLite2-Country.mmdb", "Path to GeoLite2-Country.mmdb")
+	cityMMDBPath := flag.String("city-mmdb", "GeoLite2-City.mmdb", "Path to GeoLite2-City.mmdb")
 	asnMMDBPath := flag.String("asn-mmdb", "GeoLite2-ASN.mmdb", "Path to GeoLite2-ASN.mmdb")
 	port := flag.String("port", ":8399", "HTTP server port")
 	cacheSize := flag.Int("cache", 10000, "Number of LRU cache entries")

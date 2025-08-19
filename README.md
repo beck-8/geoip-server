@@ -32,7 +32,7 @@ curl -sSL https://raw.githubusercontent.com/beck-8/geoip-server/refs/heads/main/
 
 | 参数             | 类型     | 默认值                      | 描述                        |
 |------------------|----------|-----------------------------|-----------------------------|
-| `-country-mmdb`  | string   | `GeoLite2-Country.mmdb`     | MaxMind 国家数据库路径      |
+| `-city-mmdb`  | string   | `GeoLite2-City.mmdb`     | MaxMind 城市数据库路径      |
 | `-asn-mmdb`  | string   | `GeoLite2-ASN.mmdb`     | ASN 数据库路径      |
 | `-port`          | string   | `:8399`                     | HTTP 监听端口               |
 | `-cache`         | int      | `10000`                     | LRU 缓存条目数量            |
@@ -46,7 +46,7 @@ curl -sSL https://raw.githubusercontent.com/beck-8/geoip-server/refs/heads/main/
 
 ```bash
 ./geoip-server \
-  -country-mmdb /path/to/GeoLite2-Country.mmdb \
+  -city-mmdb /path/to/GeoLite2-City.mmdb \
   -asn-mmdb /path/to/GeoLite2-ASN.mmdb \
   -port :8399 \
   -cache 10000 \
@@ -72,17 +72,18 @@ GET /api/ipinfo
 
 ```json
 {
-    "ip": "8.8.8.8",
-    "continent_code": "NA",
-    "country": "United States",
-    "country_zh": "美国",
-    "country_code": "US",
-    "registered_country_code": "US",
-    "asn": 15169,
-    "organization": "GOOGLE",
-    "asn_ipv4_num": 15169,
-    "timestamp": 1753024932398,
-    "request_id": "bb415f25-cd3b-450d-ab6b-86f153857538"
+	"ip": "119.29.29.29",
+	"continent_code": "AS",
+	"country": "China",
+	"country_zh": "中国",
+	"country_code": "CN",
+	"city": "Guangzhou",
+	"city_zh": "广州市",
+	"registered_country_code": "CN",
+	"asn": 132203,
+	"organization": "Tencent Building, Kejizhongyi Avenue",
+	"timestamp": 1755592554551,
+	"request_id": "523a8da8-2e62-44ad-bd2e-e75411949309"
 }
 ```
 

@@ -8,7 +8,7 @@ Wants = network.target
 Type = simple
 StandardOutput=null
 WorkingDirectory=/opt/geoip-server/
-ExecStart = /opt/geoip-server/geoip-server -port :8399 -asn-mmdb GeoLite2-ASN.mmdb -country-mmdb GeoLite2-Country.mmdb -log /var/log/geoip-server.log
+ExecStart = /opt/geoip-server/geoip-server -port :8399 -asn-mmdb GeoLite2-ASN.mmdb -city-mmdb GeoLite2-City.mmdb -log /var/log/geoip-server.log
 Restart=always
 
 [Install]
