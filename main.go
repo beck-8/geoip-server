@@ -11,6 +11,7 @@ import (
 	"net/netip"
 	"os"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -26,6 +27,7 @@ var (
 	countryDB     *geoip2.Reader
 	asnDB         *geoip2.Reader
 	geoCache      *lru.Cache
+	cacheMutex    sync.RWMutex // 保护 geoCache 的并发访问
 )
 
 type GeoResponse struct {
@@ -66,11 +68,18 @@ type geoCacheEntry struct {
 }
 
 func queryGeo(ip netip.Addr) (*geoip2.City, *geoip2.ASN, error) {
-	if v, ok := geoCache.Get(ip.String()); ok {
+	ipStr := ip.String()
+
+	// LRU cache 的 Get 操作会修改内部链表（MoveToFront），需要使用写锁
+	cacheMutex.Lock()
+	if v, ok := geoCache.Get(ipStr); ok {
+		cacheMutex.Unlock()
 		entry := v.(*geoCacheEntry)
 		return entry.country, entry.asn, nil
 	}
+	cacheMutex.Unlock()
 
+	// 缓存未命中，查询数据库
 	cityRecord, err := countryDB.City(ip)
 	if err != nil {
 		return nil, nil, err
@@ -81,7 +90,10 @@ func queryGeo(ip netip.Addr) (*geoip2.City, *geoip2.ASN, error) {
 		return cityRecord, nil, err
 	}
 
-	geoCache.Add(ip.String(), &geoCacheEntry{country: cityRecord, asn: asnRecord})
+	// 写入缓存
+	cacheMutex.Lock()
+	geoCache.Add(ipStr, &geoCacheEntry{country: cityRecord, asn: asnRecord})
+	cacheMutex.Unlock()
 
 	return cityRecord, asnRecord, nil
 }
